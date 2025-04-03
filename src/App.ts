@@ -3,6 +3,7 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import httpStatus from 'http-status-codes'
 import router from './app/routes';
+import global_Error_Handler from './app/errors/GlobalErrorHandler';
 
 
 const app:Application = express();
@@ -27,7 +28,8 @@ app.get('/',(req:Request,res:Response)=>{
 //     })
 // })
 
-
+// error route
+app.use(global_Error_Handler);
 
 
 export default app;
