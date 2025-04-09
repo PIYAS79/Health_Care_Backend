@@ -10,6 +10,7 @@ const router = express.Router();
 
 // get all admin data route
 router.get('/',Admin_Controllers.get_All_Admin_Controller);
+router.get('/:id',Admin_Controllers.get_Single_Admin_Controller);
 
 
 
