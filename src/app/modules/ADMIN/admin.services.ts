@@ -1,4 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Admin, Prisma, PrismaClient } from '@prisma/client'
+import Final_App_Error from '../../errors/FinalAppError';
 
 const prisma = new PrismaClient();
 
@@ -63,7 +64,43 @@ const get_Single_Admin_Service = async(id:string)=>{
     return data;
 }
 
+const update_Admin_Service = async(id:string,data:Partial<Admin>)=>{
+
+    const isExist = await prisma.admin.findUnique({where:{id}});
+    if(!isExist){
+        throw new Final_App_Error(404,"Admin not found")
+    }
+
+    const result = await prisma.admin.update({
+        where:{
+            id:id
+        },
+        data
+    })
+    return result;
+}
+
+const deleteAdmin_Service = async(id:string)=>{
+    const result= await prisma.$transaction(async(transactionClient)=>{
+        const deletedAdminData = await transactionClient.admin.delete({
+            where:{
+                id
+            }
+        })
+        const deletedUserData = await transactionClient.user.delete({
+            where:{
+                email:deletedAdminData.email
+            }
+        })
+        return deletedAdminData
+    })
+    return result
+}
+
+
 export const Admin_Services = {
     get_All_Admin_Service,
-    get_Single_Admin_Service
+    get_Single_Admin_Service,
+    update_Admin_Service,
+    deleteAdmin_Service
 }
